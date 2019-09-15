@@ -113,7 +113,7 @@ def main():
     ]
 
     # Dict with data to show
-    data = {'Network':[], 'Transitivity':[], 'Average Clustering Cofficient':[]}
+    data = {'Network':[], 'Transitivity':[], 'Average Clustering Coefficient':[]}
 
     # For each network
     for i in range(len(networkFiles)):
@@ -133,7 +133,7 @@ def main():
 
 
         # Calculate Average Clustering Cofficient
-        data['Average Clustering Cofficient'].append(network.average_clustering())
+        data['Average Clustering Coefficient'].append(network.average_clustering())
 
         print('Calculated everything')
         network.degree_distribution()
