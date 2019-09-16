@@ -14,7 +14,7 @@ from IPython.display import display, HTML, display_pretty
 # A flag to use timer, just to prevent your system to freeze while running heavy processes
 useTimer = False #this feature is disabled
 
-#| Add some functions to help us calculate the second moment of the degree distribution
+#| Add some functions to help us
 # Calculate the n-th moment of a probability distribution
 def nth_moment_of_probability_distribution(xList, pxList, n):
     return expected_value([x**n for x in xList], pxList)
@@ -22,6 +22,14 @@ def nth_moment_of_probability_distribution(xList, pxList, n):
 # Calculate the expected value of a random variable
 def expected_value(xList, pxList):
     return sum([xList[i]*pxList[i] for i in range(len(xList))])
+
+# Calculate the shannon entropy of an array of probabilities
+def shannon_entropy(pxList):
+    H = 0
+    for p in pxList:
+        if(p > 0):
+            H = H - p*math.log(p, 2)
+    return H
 
 #| Create a class to encapsulate and do the graph operations
 class Network:
@@ -118,7 +126,7 @@ class Network:
         plt.show(block=True)
         plt.clf()
 
-#| Now we'll calculate Transitivity and Average Clustering Cofficient for each network. Then we store it in a dict to present it at the end.
+#| Now we'll calculate the measures for each network. Then we store it in a dict to present it at the end.
 def main():
     # List of files to open
     networkFiles = [
