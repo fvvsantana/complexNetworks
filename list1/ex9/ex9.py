@@ -1,4 +1,6 @@
 #| # Exercise 9
+#| **Note:** because of the Astrophysics' network taking too long to run, we didn't include this network in the computation.
+
 #| Import the libraries that we'll use
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -130,17 +132,17 @@ class Network:
 def main():
     # List of files to open
     networkFiles = [
-                    #"../data/out.ca-AstroPh",
-                    #'../data/out.ego-facebook',
-                    #'../data/out.petster-friendships-hamster-uniq',
+                    #'../data/out.ca-AstroPh',
+                    '../data/out.ego-facebook',
+                    '../data/out.petster-friendships-hamster-uniq',
                     '../data/out.subelj_euroroad_euroroad'
     ]
 
     # List of names of the networks
     networkNames = [
                     #'ArXiv’s Astrophysics',
-                    #'Facebook user-user friendships',
-                    #'Hamsterster friendships',
+                    'Facebook user-user friendships',
+                    'Hamsterster friendships',
                     'E-road network'
     ]
 
@@ -192,6 +194,7 @@ def main():
     # Display DataFrame
     df = pd.DataFrame(data)
     display(df)
+    print(df)
 
 
 #| Here we create a process to run the main function. The advantage of using this strategy, instead of directly invoking main(), is that it gives us more control to stop the program.
@@ -199,8 +202,6 @@ def main():
 #| Also, it's important to catch the KeyboardInterrupt exception, that is raised when we hit Ctrl+C.
 #| By default, Ctrl+C would kill our program and the process that we've created would still continue to run.
 #| When we catch the exception, we also terminate the process of the function main. This way, Ctrl+C works again.
-
-
 from multiprocessing import Process
 from threading import Timer
 if __name__ == "__main__":
@@ -225,4 +226,17 @@ if __name__ == "__main__":
     # If process ends in time, cancel timer
     if(useTimer):
         timer.cancel()
+
+#| When we run this code, we'll see that the average clustering coefficient and the transitivity diverge in some networks. As stated on Wikipedia:
+
+#| *It is worth noting that this metric (average clustering coefficient) places more weight on the low degree nodes, while the transitivity ratio places more weight on the high degree nodes. In fact, a weighted average where each local clustering score is weighted by $k_{i}(k_{i}-1)$ is identical to the global clustering coefficient* - [Wikipedia](https://en.wikipedia.org/wiki/Clustering_coefficient)
+
+#| To understand the effect of this in our networks we also plotted the degree distribution of the networks. The Facebook network, for example, has a great amount of nodes with low degree and a small amount of nodes with high degree. The low degree nodes are well clustered (like normal people in their social cycle), so the weight of these low degree nodes makes the average clustering coefficient higher than the transitivity ratio. Also, the nodes with high degree are connected with groups that are not well connected among themselves, so the clustering of high degree nodes is low.
+
+#| The opposite happens in the E-road network, for example, where the discrepancy among the number of high-degree nodes and the number of low-degree nodes is not as big. In this case, the high degree nodes have more impact on the transitivity ratio than on the average clustering coefficient.
+
+#| In spite of the Facebook and Hamsterster's friendships network having more nodes than the E-road network, the diameter of these networs is considerably smaller than the E-road network. Also the Average shortest path length in the E-road is greater than the others.
+
+#| Another interesting result is the discrepance between the Average degree and the Second moment of the degree distribution of the Facebook network. In a non-scale-free network, we can expect that the value of $(AverageDegree)^2$ is in the same order of the **Second moment of the degree distribution**. But in a scale-free network like the Facebook's network, the value of the **Second moment of the degree distribution** is way bigger than the $(AverageDegree)^2$.
+
 

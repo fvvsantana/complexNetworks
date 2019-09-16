@@ -1,4 +1,6 @@
 #| # Exercise 7
+#| **Note:** because of the Astrophysics' network taking too long to run, we didn't include this network in the computation.
+
 #| Import the libraries that we'll use
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -181,7 +183,8 @@ if __name__ == "__main__":
 #|
 #| *It is worth noting that this metric (average clustering coefficient) places more weight on the low degree nodes, while the transitivity ratio places more weight on the high degree nodes. In fact, a weighted average where each local clustering score is weighted by $k_{i}(k_{i}-1)$ is identical to the global clustering coefficient* - [Wikipedia](https://en.wikipedia.org/wiki/Clustering_coefficient)
 #|
-#| To understand the effect of this in our networks we also plotted the degree distribution of the networks. The Facebook network, for example, has a great amount of nodes with low degree and a small amount of nodes with high degree. The low degree nodes are well clustered, so the weight of these low degree nodes makes the average clustering coefficient higher than the transitivity ratio.
-#| The opposite happens in the E-road network, where the discrepancy among the number of high-degree nodes and the number of low-degree nodes is not as big. In this case, the high degree nodes have more impact on the transitivity ratio than on the average clustering coefficient.
+#| To understand the effect of this in our networks we also plotted the degree distribution of the networks. The Facebook network, for example, has a great amount of nodes with low degree and a small amount of nodes with high degree. The low degree nodes are well clustered (like normal people in their social cycle), so the weight of these low degree nodes makes the average clustering coefficient higher than the transitivity ratio. Also, the nodes with high degree are connected with groups that are not well connected among themselves, so the clustering of high degree nodes is low.
+
+#| The opposite happens in the E-road network, for example, where the discrepancy among the number of high-degree nodes and the number of low-degree nodes is not as big. In this case, the high degree nodes have more impact on the transitivity ratio than on the average clustering coefficient.
 
 

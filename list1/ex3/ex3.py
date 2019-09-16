@@ -82,6 +82,7 @@ plt.clf()
 print('Pearson correlation coefficient:', np.corrcoef(degrees, random_walk)[0,1])
 
 #| *According to the Cauchy–Schwarz inequality it has a value between +1 and −1, where 1 is total positive linear correlation, 0 is no linear correlation, and −1 is total negative linear correlation.* - [Wikipedia](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient)
-#| Because the Pearson correlation coefficient is close to zero, we can state that there is no linear correlation between random walk result and degrees of nodes in this graph.
+
+#| Because the Pearson correlation coefficient is close to zero, we can state that there is no linear correlation between the random walk result and the degrees of the nodes in this graph.
 
 
