@@ -130,6 +130,12 @@ class Network:
 
 #| Now we'll calculate the measures for each network. Then we store it in a dict to present it at the end.
 def main():
+
+    # This line is a strange hack to prevent jupyter from sending a warning called:
+    # [IPKernelApp] WARNING | WARNING: attempted to send message from fork
+    # On github there is a similar issue still opened: <https://github.com/tqdm/tqdm/issues/485>
+    print(' ', end='', flush=True)
+
     # List of files to open
     networkFiles = [
                     #'../data/out.ca-AstroPh',
@@ -194,8 +200,6 @@ def main():
     # Display DataFrame
     df = pd.DataFrame(data)
     display(df)
-    print(df)
-
 
 #| Here we create a process to run the main function. The advantage of using this strategy, instead of directly invoking main(), is that it gives us more control to stop the program.
 #| If we set the useTimer variable at the beginning of the program to True, the timer will stop the main process after 60 seconds. It's useful when we hit Ctrl+C in the terminal and the program refuses to stop.

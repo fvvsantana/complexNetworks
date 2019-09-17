@@ -98,6 +98,12 @@ class Network:
 
 #| Now we'll calculate Transitivity and Average Clustering Cofficient for each network. Then we store it in a dict to present it at the end.
 def main():
+
+    # This line is a strange hack to prevent jupyter from sending a warning called:
+    # [IPKernelApp] WARNING | WARNING: attempted to send message from fork
+    # On github there is a similar issue still opened: <https://github.com/tqdm/tqdm/issues/485>
+    print(' ', end='', flush=True)
+
     # List of files to open
     networkFiles = [
                     #"../data/out.ca-AstroPh",
@@ -137,7 +143,6 @@ def main():
         # Calculate Average Clustering Cofficient
         data['Average Clustering Coefficient'].append(network.average_clustering())
 
-        print('Calculated everything')
         network.degree_distribution()
         network.plot_degree_distribution()
 
