@@ -2,8 +2,6 @@ import sys
 import os
 # This script converts a python script to jupyter notebook, executes and saves the notebook, then converts the output to an html file.
 
-# To use this script, 
-
 # To explain more clearly, here is an example with a script called 'ex1.py' in a folder called 'ex1/':
 # py2nb ex1/ex1.py
 # jupyter nbconvert --to notebook --ExecutePreprocessor.timeout=None --ExecutePreprocessor.timeout='python3' --output='ex1_out.ipynb' --execute ex1/ex1.ipynb

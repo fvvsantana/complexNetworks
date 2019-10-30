@@ -76,32 +76,13 @@ def calc_MI(x, y, bins):
     '''
 
 if __name__ == "__main__":
-    # Create the graph for benchmark
-    G = benchmark_girvan_newman()
-
-    # Get the true set of communities
-    communities = {frozenset(G.nodes[v]['community']) for v in G}
-    communities = sorted(map(sorted, communities))
-
-    bla = np.histogram2d([0,1,2], [0,1,2], bins=3)
-    print(bla)
-
-
-    #com_true = [0, 1, 2]
-    #com_pred = [4, 5, 6]
-    #com_true = [0,0,0,0,0,0,0,0,0,0]
-    com_true = [2,2,2,2,2,2,2,2,2,2]
-    #com_true = [0,0,0,1,1,1,2,2,2,2]
-    com_pred = [2,2,2,2,2,2,2,2,2,2]
-    #com_pred = [0,1,1,2,2,2,2,2,2,2]
-    #com_pred = [1]
-
-    #nmi = normalized_mutual_info_score(com_true, com_pred, average_method='arithmetic')
-    nmi = adjusted_mutual_info_score(com_true, com_pred, average_method='arithmetic')
-    #adjusted_mutual_info_score
-    print(nmi)
-
-    exit()
+    #G= G=nx.read_edgelist("data/zachary.txt", nodetype=int)
+    G=nx.karate_club_graph()
+    G = G.to_undirected()
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    #pos=nx.fruchterman_reingold_layout(G)
+    #nx.draw_networkx(G, pos=pos, node_color = 'b')
+    #plt.show(True)
 
     # List of community detection methods
     methods = [ detect_communities_louvain,
