@@ -84,6 +84,14 @@ if __name__ == "__main__":
     #nx.draw_networkx(G, pos=pos, node_color = 'b')
     #plt.show(True)
 
+    # List of method names
+    methodNames = [
+        'Louvain',
+        'Girvan Newman',
+        'Fast Greedy',
+        'Label Propagation'
+    ]
+
     # List of community detection methods
     methods = [ detect_communities_louvain,
     detect_communities_girvan_newman,
@@ -91,8 +99,9 @@ if __name__ == "__main__":
     detect_communities_label_propagation
     ]
     # For each method in the list
-    for method in methods:
+    for i in range(len(methods)):
         # Apply community detection method on graph
-        result = method(G)
+        result = methods[i](G)
         # Plot graph with its communities and name it
-        show_communities(G, result, name=method.__name__[19:])
+        #show_communities(G, result, name=method.__name__[19:])
+        show_communities(G, result, name=methodNames[i])
