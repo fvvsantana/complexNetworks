@@ -1,4 +1,4 @@
-#| # Exercise 6
+#| # Exercise 8
 
 #| Import the libraries that we'll use
 import numpy as np
@@ -90,10 +90,6 @@ def communitiesToClassification(communities):
     # Return classification
     return classification
 
-    '''
-    https://stackoverflow.com/questions/20491028/optimal-way-to-compute-pairwise-mutual-information-using-numpy
-    https://course.ccs.neu.edu/cs6140sp15/7_locality_cluster/Assignment-6/NMI.pdf
-    '''
 #| Now that we did almost everything we'll need, let's call our functions
 if __name__ == "__main__":
     # Create the graph for benchmark

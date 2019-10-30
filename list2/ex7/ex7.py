@@ -65,15 +65,6 @@ def show_communities(G, communities, name='title'):
     nx.draw_networkx_edges(G, pos, alpha=0.5)
     plt.show(block=True)
 
-def calc_MI(x, y, bins):
-    c_xy = np.histogram2d(x, y, bins)[0]
-    mi = mutual_info_score(None, None, contingency=c_xy)
-    return mi
-
-    '''
-    https://stackoverflow.com/questions/20491028/optimal-way-to-compute-pairwise-mutual-information-using-numpy
-    https://course.ccs.neu.edu/cs6140sp15/7_locality_cluster/Assignment-6/NMI.pdf
-    '''
 
 if __name__ == "__main__":
     #G= G=nx.read_edgelist("data/zachary.txt", nodetype=int)
