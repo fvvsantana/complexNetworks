@@ -1,5 +1,5 @@
 #| # Exercise 9
-#| **Note:** because of the Astrophysics' network taking too long to run, we didn't include this network in the computation.
+#| **Note:** because of the Human Proteins network was taking too long to run, we didn't include this network in the computation.
 
 
 #| Import the libraries that we'll use
@@ -60,6 +60,25 @@ class Network:
         # Save graph to the network
         self.graph = G
         return self.graph
+
+    # Read graph from file and apply transformations
+    def read_gml(self, inputFile):
+        # To read the network from a file, we use the command read_edgelist.
+        G = nx.read_gml(inputFile)
+        # We transfor the network into the undirected version.
+        G = G.to_undirected()
+        # Here we consider only the largest component.
+        Gcc=sorted(nx.connected_component_subgraphs(G), key = len, reverse=True)
+        G=Gcc[0]
+        # Sometimes the node labels are not in the sequential order or strings are used. To facilitate our implementation, let us convert the labels to integers starting with the index zero, because Python uses 0-based indexing.
+        G = nx.convert_node_labels_to_integers(G, first_label=0)
+        # Save graph to the network
+        self.graph = G
+        return self.graph
+
+    # Turn multigraph into graph
+    def multiGraphToGraph(self):
+        self.graph = nx.Graph(self.graph)
 
     # Store and return the transitivity of the graph
     def transitivity(self):
@@ -191,7 +210,9 @@ def main():
                     #'data/out.ca-AstroPh',
                     #'data/out.ego-facebook',
                     #'data/out.petster-friendships-hamster-uniq',
-                    'data/out.subelj_euroroad_euroroad'
+                    'data/out.subelj_euroroad_euroroad',
+                    'data/USairport500.txt',
+                    #'data/out.maayan-vidal'
     ]
 
     # List of names of the networks
@@ -199,8 +220,25 @@ def main():
                     #'ArXiv’s Astrophysics',
                     #'Facebook user-user friendships',
                     #'Hamsterster friendships',
-                    'E-road network'
+                    'E-road network',
+                    'US airport',
+                    #'Human protein'
     ]
+
+    # Load all networks
+
+    # List of networks
+    networks = []
+    for i in range(len(networkNames)):
+        # Load network
+        networks.append(Network(name=networkNames[i]))
+        networks[i].read_graph(networkFiles[i])
+    # Read glm network
+    networkNames.append('Neural Network')
+    multiGraph =  Network(name=networkNames[-1])
+    multiGraph.read_gml('data/celegansneural.gml')
+    multiGraph.multiGraphToGraph()
+    networks.append(multiGraph)
 
     # List of community detection methods
     methods = [
@@ -229,14 +267,15 @@ def main():
             'Nodes':[],
             'Average degree':[],
             'Assortativity coefficient':[],
-            'Average shortest path length':[]
+            'Average shortest path length':[],
+            'Average clustering coefficient':[],
+            'Transitivity':[]
             }
 
     # For each network
-    for i in range(len(networkFiles)):
-        # Load network
-        network = Network(name=networkNames[i])
-        network.read_graph(networkFiles[i])
+    for i in range(len(networkNames)):
+        # Get current network
+        network = networks[i]
 
         # Append network name
         data['Network'].append(networkNames[i])
@@ -253,6 +292,12 @@ def main():
         # Calculate average shortest path length
         data['Average shortest path length'].append(network.average_shortest_path_length())
 
+        # Calculate Average Clustering Cofficient
+        data['Average clustering coefficient'].append(network.average_clustering())
+
+        # Calculate transitivity
+        data['Transitivity'].append(network.transitivity())
+
         # Append network name
         modularities['Network'].append(networkNames[i])
         for j in range(len(methodNames)):
@@ -260,6 +305,8 @@ def main():
             community = methods[j](network.graph)
             # Calculate modularity of community
             modularities[methodNames[j]].append(network.modularity(community))
+
+        print(networkNames[i], ' calculated.')
 
     # Display DataFrame
     print('Measures by network')
@@ -303,12 +350,6 @@ if __name__ == "__main__":
 
 #| When we run this code, we'll see that the average clustering coefficient and the transitivity diverge in some networks. As stated on Wikipedia:
 
-#| *It is worth noting that this metric (average clustering coefficient) places more weight on the low degree nodes, while the transitivity ratio places more weight on the high degree nodes. In fact, a weighted average where each local clustering score is weighted by $k_{i}(k_{i}-1)$ is identical to the global clustering coefficient* - [Wikipedia](https://en.wikipedia.org/wiki/Clustering_coefficient)
-
-#| To understand the effect of this in our networks we also plotted the degree distribution of the networks. The Facebook network, for example, has a great amount of nodes with low degree and a small amount of nodes with high degree. The low degree nodes are well clustered (like normal people in their social cycle), so the weight of these low degree nodes makes the average clustering coefficient higher than the transitivity ratio. Also, the nodes with high degree are connected with groups that are not well connected among themselves, so the clustering of high degree nodes is low.
-
-#| The opposite happens in the E-road network, for example, where the discrepancy among the number of high-degree nodes and the number of low-degree nodes is not as big. In this case, the high degree nodes have more impact on the transitivity ratio than on the average clustering coefficient.
-
-#| In spite of the Facebook and Hamsterster's friendships network having more nodes than the E-road network, the diameter of these networs is considerably smaller than the E-road network. Also the Average shortest path length in the E-road is greater than the others.
-
-#| Another interesting result is the discrepance between the Average degree and the Second moment of the degree distribution of the Facebook network. In a non-scale-free network, we can expect that the value of $(AverageDegree)^2$ is in the same order of the **Second moment of the degree distribution**. But in a scale-free network like the Facebook's network, the value of the **Second moment of the degree distribution** is way bigger than the $(AverageDegree)^2$.
+#| We can see that the Louvain method had the best results in modularity among the tested methods. The Fast Greedy method also did a good job on the E-road and Neural networks, but in the US airport it had a bad performance.
+#| Indeed, the US airport network had the worst performance among all the networks. It was easier for most of the methods to detect the communities in the E-road network, because it's a big-world network (given the average shortest path), so you don't have edges crossing distant communities. For the US airport network and the Neural Network, the measures are almost the same. So, in order so try to explain it, we calculated the Average Clustering Coefficient and the Transitivity of these networks. As we can see, the average clustering coefficient and the transitivity are way bigger in the US airport than in the Neural Network. This level of clustering probably causes confusion in the algorithms because it's hard to separate the clusters.
+#| Regarding assortativity, observing the data, we can state that the higher the assortativity in a network, the higher is the modularity that the detection community algorithms can reach.

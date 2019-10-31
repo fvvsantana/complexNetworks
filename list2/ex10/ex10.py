@@ -1,4 +1,4 @@
-#| # Exercise 7
+#| # Exercise 10
 
 import numpy as np
 import matplotlib.pyplot as plt

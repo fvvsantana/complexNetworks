@@ -1,4 +1,4 @@
-#| # Exercise 8
+#| # Exercise 6
 
 #| Import the libraries that we'll use
 import numpy as np

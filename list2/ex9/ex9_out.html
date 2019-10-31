@@ -13077,7 +13077,7 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Exercise-9">Exercise 9<a class="anchor-link" href="#Exercise-9">&#182;</a></h1><p><strong>Note:</strong> because of the Astrophysics' network taking too long to run, we didn't include this network in the computation.</p>
+<h1 id="Exercise-9">Exercise 9<a class="anchor-link" href="#Exercise-9">&#182;</a></h1><p><strong>Note:</strong> because of the Human Proteins network was taking too long to run, we didn't include this network in the computation.</p>
 
 </div>
 </div>
@@ -13096,6 +13096,12 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">networkx.algorithms</span> <span class="k">import</span> <span class="n">community</span>
+<span class="kn">from</span> <span class="nn">community</span> <span class="k">import</span> <span class="n">community_louvain</span>
+<span class="kn">from</span> <span class="nn">networkx.algorithms.community</span> <span class="k">import</span> <span class="n">greedy_modularity_communities</span>
+<span class="kn">from</span> <span class="nn">networkx.algorithms.community</span> <span class="k">import</span> <span class="n">label_propagation_communities</span>
+<span class="kn">from</span> <span class="nn">networkx.algorithms.community</span> <span class="k">import</span> <span class="n">asyn_lpa_communities</span>
+<span class="kn">from</span> <span class="nn">networkx.algorithms.community.quality</span> <span class="k">import</span> <span class="n">modularity</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">math</span>
@@ -13183,6 +13189,25 @@ div#notebook {
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">G</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
 
+    <span class="c1"># Read graph from file and apply transformations</span>
+    <span class="k">def</span> <span class="nf">read_gml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputFile</span><span class="p">):</span>
+        <span class="c1"># To read the network from a file, we use the command read_edgelist.</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_gml</span><span class="p">(</span><span class="n">inputFile</span><span class="p">)</span>
+        <span class="c1"># We transfor the network into the undirected version.</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
+        <span class="c1"># Here we consider only the largest component.</span>
+        <span class="n">Gcc</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">connected_component_subgraphs</span><span class="p">(</span><span class="n">G</span><span class="p">),</span> <span class="n">key</span> <span class="o">=</span> <span class="nb">len</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">G</span><span class="o">=</span><span class="n">Gcc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Sometimes the node labels are not in the sequential order or strings are used. To facilitate our implementation, let us convert the labels to integers starting with the index zero, because Python uses 0-based indexing.</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">convert_node_labels_to_integers</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">first_label</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Save graph to the network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">G</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
+
+    <span class="c1"># Turn multigraph into graph</span>
+    <span class="k">def</span> <span class="nf">multiGraphToGraph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+
     <span class="c1"># Store and return the transitivity of the graph</span>
     <span class="k">def</span> <span class="nf">transitivity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">transitivity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
@@ -13219,6 +13244,21 @@ div#notebook {
     <span class="c1"># Calculate diameter</span>
     <span class="k">def</span> <span class="nf">diameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">diameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+
+    <span class="c1"># Calculate assortativity coefficient</span>
+    <span class="k">def</span> <span class="nf">degree_assortativity_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">degree_assortativity_coefficient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">modularity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">communities</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">modularity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">communities</span><span class="p">)</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    # Girvan Newman&#39;s community detection method</span>
+<span class="sd">    def detect_communities_girvan_newman(self):</span>
+<span class="sd">        communities = community.girvan_newman(self.graph)</span>
+<span class="sd">        return sorted(sorted(c) for c in next(communities))</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
 
     <span class="c1"># Calculate degree distribution</span>
     <span class="k">def</span> <span class="nf">degree_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -13266,6 +13306,51 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Method-functions">Method functions<a class="anchor-link" href="#Method-functions">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Louvain&#39;s community detection method</span>
+<span class="k">def</span> <span class="nf">detect_communities_louvain</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
+    <span class="n">partition</span> <span class="o">=</span> <span class="n">community_louvain</span><span class="o">.</span><span class="n">best_partition</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+    <span class="n">communities</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">com</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">partition</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="p">:</span>
+        <span class="n">list_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">nodes</span> <span class="k">for</span> <span class="n">nodes</span> <span class="ow">in</span> <span class="n">partition</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">partition</span><span class="p">[</span><span class="n">nodes</span><span class="p">]</span> <span class="o">==</span> <span class="n">com</span><span class="p">]</span>
+        <span class="n">communities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">list_nodes</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">communities</span><span class="p">)</span>
+
+<span class="c1"># Girvan Newman&#39;s community detection method</span>
+<span class="k">def</span> <span class="nf">detect_communities_girvan_newman</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
+    <span class="n">communities</span> <span class="o">=</span> <span class="n">community</span><span class="o">.</span><span class="n">girvan_newman</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">communities</span><span class="p">))</span>
+
+<span class="c1"># Fast Greedy community detection method</span>
+<span class="k">def</span> <span class="nf">detect_communities_greedy</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
+    <span class="n">communities</span> <span class="o">=</span> <span class="n">greedy_modularity_communities</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">sorted</span><span class="p">,</span> <span class="n">communities</span><span class="p">))</span>
+
+<span class="c1"># Label propagation community detection method</span>
+<span class="k">def</span> <span class="nf">detect_communities_label_propagation</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
+    <span class="n">communities</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="c1">#for c in asyn_lpa_communities(G):</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">label_propagation_communities</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
+        <span class="n">communities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">communities</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>Now we'll calculate the measures for each network. Then we store it in a dict to present it at the end.</p>
 
 </div>
@@ -13273,7 +13358,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -13285,40 +13370,75 @@ div#notebook {
 
     <span class="c1"># List of files to open</span>
     <span class="n">networkFiles</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="c1">#&#39;../data/out.ca-AstroPh&#39;,</span>
-                    <span class="s1">&#39;../data/out.ego-facebook&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;../data/out.petster-friendships-hamster-uniq&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;../data/out.subelj_euroroad_euroroad&#39;</span>
+                    <span class="c1">#&#39;data/out.ca-AstroPh&#39;,</span>
+                    <span class="c1">#&#39;data/out.ego-facebook&#39;,</span>
+                    <span class="c1">#&#39;data/out.petster-friendships-hamster-uniq&#39;,</span>
+                    <span class="s1">&#39;data/out.subelj_euroroad_euroroad&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;data/USairport500.txt&#39;</span><span class="p">,</span>
+                    <span class="c1">#&#39;data/out.maayan-vidal&#39;</span>
     <span class="p">]</span>
 
     <span class="c1"># List of names of the networks</span>
     <span class="n">networkNames</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="c1">#&#39;ArXiv’s Astrophysics&#39;,</span>
-                    <span class="s1">&#39;Facebook user-user friendships&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;Hamsterster friendships&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;E-road network&#39;</span>
+                    <span class="c1">#&#39;Facebook user-user friendships&#39;,</span>
+                    <span class="c1">#&#39;Hamsterster friendships&#39;,</span>
+                    <span class="s1">&#39;E-road network&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;US airport&#39;</span><span class="p">,</span>
+                    <span class="c1">#&#39;Human protein&#39;</span>
     <span class="p">]</span>
+
+    <span class="c1"># Load all networks</span>
+
+    <span class="c1"># List of networks</span>
+    <span class="n">networks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">networkNames</span><span class="p">)):</span>
+        <span class="c1"># Load network</span>
+        <span class="n">networks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Network</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">networkNames</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="n">networks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">read_graph</span><span class="p">(</span><span class="n">networkFiles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="c1"># Read glm network</span>
+    <span class="n">networkNames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Neural Network&#39;</span><span class="p">)</span>
+    <span class="n">multiGraph</span> <span class="o">=</span>  <span class="n">Network</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">networkNames</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">multiGraph</span><span class="o">.</span><span class="n">read_gml</span><span class="p">(</span><span class="s1">&#39;data/celegansneural.gml&#39;</span><span class="p">)</span>
+    <span class="n">multiGraph</span><span class="o">.</span><span class="n">multiGraphToGraph</span><span class="p">()</span>
+    <span class="n">networks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">multiGraph</span><span class="p">)</span>
+
+    <span class="c1"># List of community detection methods</span>
+    <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">detect_communities_louvain</span><span class="p">,</span>
+        <span class="n">detect_communities_girvan_newman</span><span class="p">,</span>
+        <span class="n">detect_communities_greedy</span><span class="p">,</span>
+        <span class="n">detect_communities_label_propagation</span>
+    <span class="p">]</span>
+
+    <span class="c1"># List of method names</span>
+    <span class="n">methodNames</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;Louvain&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Girvan Newman&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Fast Greedy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Label Propagation&#39;</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Create a dict to store the modularities for each method and each network</span>
+    <span class="n">modularities</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">modularities</span><span class="p">[</span><span class="s1">&#39;Network&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">methodName</span> <span class="ow">in</span> <span class="n">methodNames</span><span class="p">:</span>
+        <span class="n">modularities</span><span class="p">[</span><span class="n">methodName</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c1"># Dict with data to show</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Network&#39;</span><span class="p">:[],</span>
-            <span class="s1">&#39;Nodes&#39;</span><span class="p">:[],</span> 
+            <span class="s1">&#39;Nodes&#39;</span><span class="p">:[],</span>
             <span class="s1">&#39;Average degree&#39;</span><span class="p">:[],</span>
-            <span class="s1">&#39;Second moment of degree distribution&#39;</span><span class="p">:[],</span>
-            <span class="s1">&#39;Average clustering coefficient&#39;</span><span class="p">:[],</span>
-            <span class="s1">&#39;Transitivity&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;Assortativity coefficient&#39;</span><span class="p">:[],</span>
             <span class="s1">&#39;Average shortest path length&#39;</span><span class="p">:[],</span>
-            <span class="s1">&#39;Diameter&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;Average clustering coefficient&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;Transitivity&#39;</span><span class="p">:[]</span>
             <span class="p">}</span>
 
     <span class="c1"># For each network</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">networkFiles</span><span class="p">)):</span>
-        <span class="c1"># Load network</span>
-        <span class="n">network</span> <span class="o">=</span> <span class="n">Network</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">networkNames</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-        <span class="n">network</span><span class="o">.</span><span class="n">read_graph</span><span class="p">(</span><span class="n">networkFiles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-
-        <span class="c1"># Let us verify the number of nodes and edges of the network.</span>
-        <span class="c1">#print(&#39;Number of nodes:&#39;, network.number_of_nodes())</span>
-        <span class="c1">#print(&#39;Number of edges:&#39;, network.number_of_edges())</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">networkNames</span><span class="p">)):</span>
+        <span class="c1"># Get current network</span>
+        <span class="n">network</span> <span class="o">=</span> <span class="n">networks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
         <span class="c1"># Append network name</span>
         <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Network&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">networkNames</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
@@ -13329,8 +13449,11 @@ div#notebook {
         <span class="c1"># Get number of nodes</span>
         <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Average degree&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">average_node_degree</span><span class="p">())</span>
 
-        <span class="c1"># Get Second moment of degree distribution</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Second moment of degree distribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">nth_moment_of_degree_distribution</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+        <span class="c1"># Calculate assortativity coefficient</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Assortativity coefficient&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">degree_assortativity_coefficient</span><span class="p">())</span>
+
+        <span class="c1"># Calculate average shortest path length</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Average shortest path length&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">average_shortest_path_length</span><span class="p">())</span>
 
         <span class="c1"># Calculate Average Clustering Cofficient</span>
         <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Average clustering coefficient&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">average_clustering</span><span class="p">())</span>
@@ -13338,14 +13461,24 @@ div#notebook {
         <span class="c1"># Calculate transitivity</span>
         <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Transitivity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">transitivity</span><span class="p">())</span>
 
-        <span class="c1"># Calculate average shortest path length</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Average shortest path length&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">average_shortest_path_length</span><span class="p">())</span>
+        <span class="c1"># Append network name</span>
+        <span class="n">modularities</span><span class="p">[</span><span class="s1">&#39;Network&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">networkNames</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">methodNames</span><span class="p">)):</span>
+            <span class="c1"># Gets community from graph using method[j]</span>
+            <span class="n">community</span> <span class="o">=</span> <span class="n">methods</span><span class="p">[</span><span class="n">j</span><span class="p">](</span><span class="n">network</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+            <span class="c1"># Calculate modularity of community</span>
+            <span class="n">modularities</span><span class="p">[</span><span class="n">methodNames</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">modularity</span><span class="p">(</span><span class="n">community</span><span class="p">))</span>
 
-        <span class="c1"># Calculate diameter</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Diameter&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">diameter</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">networkNames</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39; calculated.&#39;</span><span class="p">)</span>
 
     <span class="c1"># Display DataFrame</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Measures by network&#39;</span><span class="p">)</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="c1"># Display DataFrame</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Modularity by method&#39;</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">modularities</span><span class="p">)</span>
     <span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 </pre></div>
 
@@ -13368,7 +13501,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="k">import</span> <span class="n">Process</span>
@@ -13411,7 +13544,11 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
+<pre> E-road network  calculated.
+US airport  calculated.
+Neural Network  calculated.
+Measures by network
+</pre>
 </div>
 </div>
 
@@ -13443,46 +13580,117 @@ div#notebook {
       <th>Network</th>
       <th>Nodes</th>
       <th>Average degree</th>
-      <th>Second moment of degree distribution</th>
+      <th>Assortativity coefficient</th>
+      <th>Average shortest path length</th>
       <th>Average clustering coefficient</th>
       <th>Transitivity</th>
-      <th>Average shortest path length</th>
-      <th>Diameter</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>0</td>
-      <td>Facebook user-user friendships</td>
-      <td>2888</td>
-      <td>2.064404</td>
-      <td>528.131579</td>
-      <td>0.027247</td>
-      <td>0.000359</td>
-      <td>3.867421</td>
-      <td>9</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>Hamsterster friendships</td>
-      <td>1788</td>
-      <td>13.955257</td>
-      <td>635.606264</td>
-      <td>0.143305</td>
-      <td>0.090369</td>
-      <td>3.452640</td>
-      <td>14</td>
-    </tr>
-    <tr>
-      <td>2</td>
       <td>E-road network</td>
       <td>1039</td>
       <td>2.512031</td>
-      <td>7.753609</td>
+      <td>0.090040</td>
+      <td>18.395146</td>
       <td>0.018906</td>
       <td>0.035255</td>
-      <td>18.395146</td>
-      <td>62</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>US airport</td>
+      <td>500</td>
+      <td>11.920000</td>
+      <td>-0.267863</td>
+      <td>2.991030</td>
+      <td>0.617489</td>
+      <td>0.351382</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Neural Network</td>
+      <td>297</td>
+      <td>14.464646</td>
+      <td>-0.163199</td>
+      <td>2.455319</td>
+      <td>0.292363</td>
+      <td>0.180711</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Modularity by method
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Network</th>
+      <th>Louvain</th>
+      <th>Girvan Newman</th>
+      <th>Fast Greedy</th>
+      <th>Label Propagation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>E-road network</td>
+      <td>0.867843</td>
+      <td>2.112958e-01</td>
+      <td>8.640176e-01</td>
+      <td>5.446969e-01</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>US airport</td>
+      <td>0.281822</td>
+      <td>3.021650e-03</td>
+      <td>-2.592707e-17</td>
+      <td>8.466766e-03</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Neural Network</td>
+      <td>0.401557</td>
+      <td>-1.083681e-07</td>
+      <td>3.692011e-01</td>
+      <td>-8.576769e-18</td>
     </tr>
   </tbody>
 </table>
@@ -13506,39 +13714,9 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><em>It is worth noting that this metric (average clustering coefficient) places more weight on the low degree nodes, while the transitivity ratio places more weight on the high degree nodes. In fact, a weighted average where each local clustering score is weighted by $k_{i}(k_{i}-1)$ is identical to the global clustering coefficient</em> - <a href="https://en.wikipedia.org/wiki/Clustering_coefficient">Wikipedia</a></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>To understand the effect of this in our networks we also plotted the degree distribution of the networks. The Facebook network, for example, has a great amount of nodes with low degree and a small amount of nodes with high degree. The low degree nodes are well clustered (like normal people in their social cycle), so the weight of these low degree nodes makes the average clustering coefficient higher than the transitivity ratio. Also, the nodes with high degree are connected with groups that are not well connected among themselves, so the clustering of high degree nodes is low.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The opposite happens in the E-road network, for example, where the discrepancy among the number of high-degree nodes and the number of low-degree nodes is not as big. In this case, the high degree nodes have more impact on the transitivity ratio than on the average clustering coefficient.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In spite of the Facebook and Hamsterster's friendships network having more nodes than the E-road network, the diameter of these networs is considerably smaller than the E-road network. Also the Average shortest path length in the E-road is greater than the others.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Another interesting result is the discrepance between the Average degree and the Second moment of the degree distribution of the Facebook network. In a non-scale-free network, we can expect that the value of $(AverageDegree)^2$ is in the same order of the <strong>Second moment of the degree distribution</strong>. But in a scale-free network like the Facebook's network, the value of the <strong>Second moment of the degree distribution</strong> is way bigger than the $(AverageDegree)^2$.</p>
+<p>We can see that the Louvain method had the best results in modularity among the tested methods. The Fast Greedy method also did a good job on the E-road and Neural networks, but in the US airport it had a bad performance.
+ Indeed, the US airport network had the worst performance among all the networks. It was easier for most of the methods to detect the communities in the E-road network, because it's a big-world network (given the average shortest path), so you don't have edges crossing distant communities. For the US airport network and the Neural Network, the measures are almost the same. So, in order so try to explain it, we calculated the Average Clustering Coefficient and the Transitivity of these networks. As we can see, the average clustering coefficient and the transitivity are way bigger in the US airport than in the Neural Network. This level of clustering probably causes confusion in the algorithms because it's hard to separate the clusters.
+ Regarding assortativity, observing the data, we can state that the higher the assortativity in a network, the higher is the modularity that the detection community algorithms can reach.</p>
 
 </div>
 </div>

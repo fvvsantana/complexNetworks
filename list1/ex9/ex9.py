@@ -154,7 +154,7 @@ def main():
 
     # Dict with data to show
     data = {'Network':[],
-            'Nodes':[], 
+            'Nodes':[],
             'Average degree':[],
             'Second moment of degree distribution':[],
             'Average clustering coefficient':[],
@@ -242,5 +242,3 @@ if __name__ == "__main__":
 #| In spite of the Facebook and Hamsterster's friendships network having more nodes than the E-road network, the diameter of these networs is considerably smaller than the E-road network. Also the Average shortest path length in the E-road is greater than the others.
 
 #| Another interesting result is the discrepance between the Average degree and the Second moment of the degree distribution of the Facebook network. In a non-scale-free network, we can expect that the value of $(AverageDegree)^2$ is in the same order of the **Second moment of the degree distribution**. But in a scale-free network like the Facebook's network, the value of the **Second moment of the degree distribution** is way bigger than the $(AverageDegree)^2$.
-
-

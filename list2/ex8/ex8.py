@@ -1,4 +1,4 @@
-#| # Exercise 6
+#| # Exercise 8
 
 #| Import the libraries that we'll use
 import numpy as np
@@ -185,7 +185,7 @@ if __name__ == "__main__":
     plt.title('LFR Benchmark')
     # Show a legend on the plot
     plt.legend()
-    
+
     # Save figure
     plt.savefig('lastPlot.png')
 
