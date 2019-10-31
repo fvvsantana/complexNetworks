@@ -124,14 +124,6 @@ class Network:
     def modularity(self, communities):
         return modularity(self.graph, communities)
 
-    '''
-    # Girvan Newman's community detection method
-    def detect_communities_girvan_newman(self):
-        communities = community.girvan_newman(self.graph)
-        return sorted(sorted(c) for c in next(communities))
-    '''
-
-
     # Calculate degree distribution
     def degree_distribution(self):
         vk = dict(self.graph.degree())
