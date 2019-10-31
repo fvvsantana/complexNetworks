@@ -104,7 +104,7 @@ if __name__ == "__main__":
     # List of method names
     methodNames = [
         'Louvain',
-        #'Girvan Newman',
+        'Girvan Newman',
         'Fast Greedy',
         'Label Propagation'
     ]
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     # List of community detection methods
     methods = [
         detect_communities_louvain,
-        #detect_communities_girvan_newman,
+        detect_communities_girvan_newman,
         detect_communities_greedy,
         detect_communities_label_propagation
     ]
@@ -136,3 +136,5 @@ if __name__ == "__main__":
     # Display DataFrame
     df = pd.DataFrame(data)
     display(df)
+
+#| As we can see, the girvan newman method was the worse on accuracy and also on time of execution. The other methods did a good job on classifying the communities, with 100% accuracy.
