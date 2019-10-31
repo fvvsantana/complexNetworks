@@ -10,8 +10,6 @@ from scipy.linalg import expm
 import pandas as pd
 import time
 from IPython.display import display, HTML, display_pretty
-#import warnings
-#warnings.simplefilter("ignore")
 
 # A flag to use timer, just to prevent your system to freeze while running heavy processes
 useTimer = False #this feature is disabled
