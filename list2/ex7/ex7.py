@@ -1,5 +1,7 @@
 #| # Exercise 7
+#| **Note:** Due to compatibility problems on running Netcarto and Informap community detection algorithms, we didn't use these methods on this exercise
 
+#| Import stuff we'll need
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -27,6 +29,7 @@ def benchmark_girvan_newman():
     return LFR_benchmark_graph(n = N, tau1 = tau1, tau2 = tau2, mu = mu, min_degree = k,
                             max_degree = k, min_community=minc, max_community = maxc, seed = 10)
 
+#| Make community detection functions
 # Louvain's community detection method
 def detect_communities_louvain(G):
     partition = community_louvain.best_partition(G)
@@ -54,11 +57,12 @@ def detect_communities_label_propagation(G):
         communities.append(sorted(c))
     return sorted(communities)
 
+#| Make a function to plot the graph with its communities
 # Plot graph with communities, receives a list of communities, where each community is a list of nodes (ints)
 def show_communities(G, communities, name='title'):
     pos=nx.spring_layout(G)
     colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
-    plt.figure()
+    #plt.figure()
     plt.title(name, fontsize=20)
     aux = 0
     for community in communities:
@@ -67,10 +71,10 @@ def show_communities(G, communities, name='title'):
     nx.draw_networkx_edges(G, pos, alpha=0.5)
     plt.show(block=True)
 
-
-if __name__ == "__main__":
+#| Let's use our functions
+def main():
     #G= G=nx.read_edgelist("data/zachary.txt", nodetype=int)
-    G=nx.karate_club_graph()
+    G = nx.karate_club_graph()
     G = G.to_undirected()
     G = nx.convert_node_labels_to_integers(G, first_label=0)
     #pos=nx.fruchterman_reingold_layout(G)
@@ -86,10 +90,11 @@ if __name__ == "__main__":
     ]
 
     # List of community detection methods
-    methods = [ detect_communities_louvain,
-    detect_communities_girvan_newman,
-    detect_communities_greedy,
-    detect_communities_label_propagation
+    methods = [
+        detect_communities_louvain,
+        detect_communities_girvan_newman,
+        detect_communities_greedy,
+        detect_communities_label_propagation
     ]
     # For each method in the list
     for i in range(len(methods)):
@@ -98,3 +103,6 @@ if __name__ == "__main__":
         # Plot graph with its communities and name it
         #show_communities(G, result, name=method.__name__[19:])
         show_communities(G, result, name=methodNames[i])
+
+if __name__ == "__main__":
+    main()
