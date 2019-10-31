@@ -1,4 +1,6 @@
 #| # Exercise 8
+#| **Note 1:** Due to compatibility problems on running Netcarto and Informap community detection algorithms, we didn't use these methods on this exercise
+#| **Note 2:** The calculation with 1000 nodes was taking too much time, so we considered the same amount of nodes as the Girvan Newman benchmark. Then we used 20 values of mu inside the [0,1[ interval.
 
 #| Import the libraries that we'll use
 import numpy as np
@@ -31,7 +33,7 @@ def benchmark_girvan_newman(N, mu):
     return LFR_benchmark_graph(n = N, tau1 = tau1, tau2 = tau2, mu = mu, min_degree = k,
                             max_degree = k, min_community=minc, max_community = maxc, seed = 10)
 
-#| ## Method functions
+#| Make community detection functions
 # Louvain's community detection method
 def detect_communities_louvain(G):
     partition = community_louvain.best_partition(G)
@@ -123,14 +125,15 @@ def getClassificationFromNetwork(G):
         return communitiesToClassification(communities, len(G))
 
 #| Now that we did almost everything we'll need, let's call our functions
-if __name__ == "__main__":
-    nNetworks = 10
+def main():
+    nNetworks = 20
     nNodes = 128
+    #nNodes = 1000
 
     # List of method names
     methodNames = [
         'Louvain',
-        #'Girvan Newman',
+        'Girvan Newman',
         'Fast Greedy',
         'Label Propagation'
     ]
@@ -138,7 +141,7 @@ if __name__ == "__main__":
     # List of community detection methods
     methods = [
         detect_communities_louvain,
-        #detect_communities_girvan_newman,
+        detect_communities_girvan_newman,
         detect_communities_greedy,
         detect_communities_label_propagation
     ]
@@ -191,3 +194,8 @@ if __name__ == "__main__":
 
     # Plot
     plt.show(block=True)
+
+if __name__ == "__main__":
+    main()
+
+#| Analyzing the graph, we can see a tendency among all the methods. After mu=0.35 there is a sudden fall of the NMI of the methods. We can say that they get way less accurate after this value. A tendency of dump was expected a priori with the increasing of mu. But a hard dump occurs, and this is because at mu=0.5 we have something close to a random graph. So we can expect a fall of the NMI when mu varies from 0 to 0.5, given that at mu=0 we expect 100% accuracy and at mu=0.5 we expect NMI close to 0. 
