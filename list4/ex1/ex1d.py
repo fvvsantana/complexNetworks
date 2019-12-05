@@ -1,4 +1,4 @@
-#| # Exercise 1 b)
+#| # Exercise 1 d)
 #| Import the libraries that we'll use
 from numpy  import *
 import numpy as np
@@ -61,7 +61,7 @@ def benchmark_girvan_newman(N, mu):
     minc = 32
     maxc = 32
     return LFR_benchmark_graph(n = N, tau1 = tau1, tau2 = tau2, mu = mu, min_degree = k,
-                            max_degree = k, min_community=minc, max_community = maxc, seed = 10)
+                            max_degree = k, min_community=minc, max_community = maxc, seed = 42)
 
 #| Write all the functions that we'll need
 #|
@@ -256,6 +256,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-#| From the plot we can see that now the situation has inverted. The most susceptible network to attacks was the scale free network BA. The attack chooses the node of greatest degree, thus the hubs are chosen, when you remove the hub, the network rapidly breaks down.
-#|
-#| We also can see that the more uniform the distribution of the degree of the nodes is in the network, the more robust it is against attacks. The network that had almost a uniform degree distribution was the WS with p=0.001, and this network performed better than the others.
+#| Analyzing the charts we cannot see relevant difference among the robustness of the different networks against attacks or failure. So, considering our experiment, we can say that in that case, the existance of communities didn't affect robustness considerably.
