@@ -198,4 +198,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-#| Analyzing the graph, we can see a tendency among all the methods. After mu=0.35 there is a sudden fall of the NMI of the methods. We can say that they get way less accurate after this value. A tendency of dump was expected a priori with the increasing of mu. But a hard dump occurs, and this is because at mu=0.5 we have something close to a random graph. So we can expect a fall of the NMI when mu varies from 0 to 0.5, given that at mu=0 we expect 100% accuracy and at mu=0.5 we expect NMI close to 0. 
+#| Analyzing the graph, we can see a tendency among all the methods. After mu=0.35 there is a sudden fall of the NMI of the methods. We can say that they get way less accurate after this value. A tendency of dump was expected a priori with the increasing of mu. But a hard dump occurs, and this is because at mu=0.5 we have something close to a random graph. So we can expect a fall of the NMI when mu varies from 0 to 0.5, given that at mu=0 we expect 100% accuracy and at mu=0.5 we expect NMI close to 0.
