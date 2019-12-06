@@ -90,7 +90,7 @@ def main():
     plt.ylabel("Fraction of infected nodes", fontsize=15)
     #lambda_c = momment_of_degree_distribution(G,1)/momment_of_degree_distribution(G,2)
     lambda_c = momment_of_degree_distribution(networks[0],1)/momment_of_degree_distribution(networks[0],2)
-    plt.axvline(lambda_c, color = 'b', label='Theoretical lambda_c')
+    plt.axvline(lambda_c, color = 'b', label='Theoretical lambda_c for random graphs')
     plt.legend()
     plt.grid(True)
     plt.show(block=True)
