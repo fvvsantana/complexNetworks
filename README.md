@@ -10,7 +10,7 @@ This repository contains the solution of 24 exercises about complex networks sep
 
 There are pdf files with more information inside of each "listX" folder.
 
-*[Click here](list1/ex1/ex1_out.ipynb) to execute the first exercise in your browser!*
+**[Click here](list1/ex1/ex1_out.ipynb) to execute the first exercise in your browser!**
 
 ## Usage
 
